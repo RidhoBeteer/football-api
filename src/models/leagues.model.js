@@ -66,4 +66,27 @@ module.exports = {
           reject(result);
         });
     }),
+  getSeasonMatches: (leagueId, seasonId) =>
+    new Promise((resolve, reject) => {
+      supabase
+        .from("matches")
+        .select(
+          `
+            match_id:id, match_datetime, status, attendance, home_formation, away_formation, home_score, away_score,
+            home_team:teams!matches_home_team_id_fkey(id, name, country:country_assoc),
+            away_team:teams!matches_away_team_id_fkey(id, name, country:country_assoc),
+            competition:competitions!matches_competition_id_fkey(id, name),
+            referee:referees!inner(id, name, nationality),
+            venue:venues!inner(id, name, city, country, capacity)
+          `
+        )
+        .eq("competitions.league_id", leagueId)
+        .eq("competitions.season_id", seasonId)
+        .then((result) => {
+          if (!result.error) {
+            resolve(result);
+          }
+          reject(result);
+        });
+    }),
 };

@@ -26,4 +26,10 @@ Router.get(
   leaguesController.getLeagueSelectedSeason
 );
 
+Router.get(
+  "/:leagueId/season/:seasonId/matches",
+  validateParams(seasonDetailSchema),
+  leaguesController.getSeasonMatches
+);
+
 module.exports = Router;

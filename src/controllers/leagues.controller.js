@@ -94,4 +94,23 @@ module.exports = {
       return response.wrapper(res, 500, "Internal Server Error", null);
     }
   },
+  getSeasonMatches: async (req, res) => {
+    try {
+      const { leagueId, seasonId } = req.params;
+      const result = await leaguesModel.getSeasonMatches(leagueId, seasonId);
+      if (result.data.length < 1) {
+        return wrapper.response(res, 404, "Not Found", []);
+      }
+
+      return wrapper.response(
+        res,
+        result.status,
+        result.statusText,
+        result.data
+      );
+    } catch (err) {
+      console.log(err);
+      return wrapper.response(res, 500, "Internal Server Error", null);
+    }
+  },
 };
