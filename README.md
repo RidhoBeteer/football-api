@@ -278,7 +278,6 @@ This endpoint retrieves the full details of a specific match using its ID.
 **Example Response**:
 
 ```json
-{"status":200,"message":"OK","data":[{"id":2,"competition_id":1,"home_team_id":1,"away_team_id":7,"home_score":4,"away_score":2,"match_datetime":"2025-08-15T19:00:00+00:00","status":"FINISHED","attendance":60315,"home_formation":"4-2-3-1","away_formation":"4-1-4-1","venue_id":19,"referee_id":1}]}
 {
   "status": 200,
   "message": "OK",
