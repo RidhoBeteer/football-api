@@ -12,6 +12,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 
 const mainRouter = require("./routers/index");
+const authRouter = require("./routers/auth.router");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -19,6 +20,7 @@ app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/auth", authRouter);
 app.use("/api", mainRouter);
 
 app.use((req, res) => {
