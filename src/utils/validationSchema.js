@@ -11,4 +11,8 @@ module.exports = {
   matchIdSchema: Joi.object({
     matchId: Joi.number().integer().positive().required(),
   }),
+  authSchema: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(3).max(12).required(),
+  }),
 };
