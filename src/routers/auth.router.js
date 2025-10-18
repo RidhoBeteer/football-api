@@ -3,8 +3,11 @@ const Router = express.Router();
 
 const authController = require("../controllers/auth.controller");
 
-Router.post("/signin", authController.signInUser);
+const { validateBody } = require("../middleware/validateRequests");
+const { authSchema } = require("../utils/validationSchema");
 
-Router.post("/signup", authController.signUpUser);
+Router.post("/signin", validateBody(authSchema), authController.signInUser);
+
+Router.post("/signup", validateBody(authSchema), authController.signUpUser);
 
 module.exports = Router;

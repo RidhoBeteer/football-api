@@ -13,6 +13,7 @@ const helmet = require("helmet");
 
 const mainRouter = require("./routers/index");
 const authRouter = require("./routers/auth.router");
+const requireAuth = require("./middleware/requireAuth");
 
 app.use(cors());
 app.use(morgan("dev"));
@@ -21,7 +22,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", authRouter);
-app.use("/api", mainRouter);
+app.use("/api", requireAuth, mainRouter);
 
 app.use((req, res) => {
   return wrapper.response(res, 404, "Not Found", []);
