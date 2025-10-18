@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 
 const leaguesController = require("../controllers/leagues.controller");
-const validateParams = require("../middleware/validateParams");
+const { validateParams } = require("../middleware/validateRequests");
 const {
   leagueIdSchema,
   seasonDetailSchema,

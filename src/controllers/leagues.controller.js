@@ -4,6 +4,7 @@ const leaguesModel = require("../models/leagues.model");
 module.exports = {
   getAllLeagues: async (req, res) => {
     try {
+      console.log(req.headers);
       const result = await leaguesModel.getAllLeagues();
 
       if (result.data.length < 1) {
@@ -17,7 +18,6 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      console.log(err);
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
@@ -37,7 +37,6 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      console.log(err);
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
@@ -62,7 +61,6 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      console.log(err);
       return response.wrapper(res, 500, "Internal Server Error", null);
     }
   },
@@ -90,7 +88,6 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      console.log(err);
       return response.wrapper(res, 500, "Internal Server Error", null);
     }
   },
@@ -109,7 +106,6 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      console.log(err);
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
