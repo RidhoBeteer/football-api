@@ -1,10 +1,10 @@
 const wrapper = require("../utils/wrapper");
 const leaguesModel = require("../models/leagues.model");
+const getSupabaseClient = require("../configs/supabaseClient");
 
 module.exports = {
   getAllLeagues: async (req, res) => {
     try {
-      console.log(req.headers);
       const result = await leaguesModel.getAllLeagues();
 
       if (result.data.length < 1) {
@@ -105,6 +105,32 @@ module.exports = {
         result.statusText,
         result.data
       );
+    } catch (err) {
+      return wrapper.response(res, 500, "Internal Server Error", null);
+    }
+  },
+  createNewLeague: async (req, res) => {
+    try {
+      const userToken = req.headers.authorization?.split(" ")[1];
+      const supabaseClient = getSupabaseClient(userToken);
+
+      const { name, country } = req.body;
+      const result = await leaguesModel.createNewLeague(
+        supabaseClient,
+        name,
+        country
+      );
+
+      if (result.error) {
+        return wrapper.response(
+          res,
+          result.status,
+          `${result.statusText}: ${result.error.message}`,
+          []
+        );
+      }
+
+      return wrapper.response(res, 200, result.statusText, result.data);
     } catch (err) {
       return wrapper.response(res, 500, "Internal Server Error", null);
     }

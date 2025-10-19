@@ -15,4 +15,14 @@ module.exports = {
     email: Joi.string().email().required(),
     password: Joi.string().min(3).max(12).required(),
   }),
+  leagueTableSchema: Joi.object({
+    name: Joi.string()
+      .trim()
+      .regex(/^[a-zA-Z0-9]+$/)
+      .required(),
+    country: Joi.string()
+      .trim()
+      .regex(/^[A-Za-z]+$/)
+      .required(),
+  }),
 };

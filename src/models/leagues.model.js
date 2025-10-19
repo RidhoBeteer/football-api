@@ -1,5 +1,22 @@
 const supabase = require("../configs/supabase");
 
+const handleResult = (result, resolve, reject) => {
+  if (
+    result.error &&
+    result.error.status &&
+    result.error.status >= 500 &&
+    result.error.status < 600
+  ) {
+    return reject(result);
+  }
+
+  if (result.status && result.status >= 500 && result.status < 600) {
+    return reject(result);
+  }
+
+  return resolve(result);
+};
+
 module.exports = {
   getLeagueCount: (leagueId) =>
     new Promise((resolve, reject) => {
@@ -87,6 +104,16 @@ module.exports = {
             resolve(result);
           }
           reject(result);
+        });
+    }),
+  createNewLeague: (supabaseClient, name, country) =>
+    new Promise((resolve, reject) => {
+      supabaseClient
+        .from("leagues")
+        .insert({ name, country })
+        .select()
+        .then((result) => {
+          handleResult(result, resolve, reject);
         });
     }),
 };
