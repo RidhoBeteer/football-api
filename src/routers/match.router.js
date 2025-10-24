@@ -11,4 +11,10 @@ Router.get(
   matchController.getMatchDetails
 );
 
+Router.get(
+  "/:matchId/shots",
+  validateParams(matchIdSchema),
+  matchController.getShotsOnMatch
+);
+
 module.exports = Router;
