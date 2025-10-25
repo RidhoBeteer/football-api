@@ -1,15 +1,15 @@
 const express = require("express");
 const Router = express.Router();
 
-const leaguesController = require("../controllers/leagues.controller");
+const competitionController = require("../controllers/competitions-controller");
 const { validateBody } = require("../middleware/validateRequests");
 const { leagueTableSchema } = require("../utils/validationSchema");
 
-Router.get("/", leaguesController.getAllLeagues);
+Router.get("/", competitionController.getAllCompetitions);
 Router.post(
   "/",
   validateBody(leagueTableSchema),
-  leaguesController.createNewLeague
+  competitionController.createNewLeague
 );
 
 module.exports = Router;
