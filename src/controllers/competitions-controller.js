@@ -1,11 +1,33 @@
 const wrapper = require("../utils/wrapper");
-const leaguesModel = require("../models/leagues.model");
+const competitionsModel = require("../models/competitions-model");
 const getSupabaseClient = require("../configs/supabaseClient");
 
 module.exports = {
-  getAllLeagues: async (req, res) => {
+  getAllCompetitions: async (req, res) => {
     try {
-      const result = await leaguesModel.getAllLeagues();
+      const result = await competitionsModel.getAllCompetitions();
+
+      if (result.data.length < 1) {
+        return wrapper.response(res, 404, "Not Found", result.data);
+      }
+
+      return wrapper.response(
+        res,
+        result.status,
+        result.statusText,
+        result.data
+      );
+    } catch (err) {
+      console.log(err);
+      return wrapper.response(res, 500, "Internal Server Error", null);
+    }
+  },
+  getCompetitionDetails: async (req, res) => {
+    try {
+      const { competitionId } = req.params;
+      const result = await competitionsModel.getCompetitionDetails(
+        competitionId
+      );
 
       if (result.data.length < 1) {
         return wrapper.response(res, 404, "Not Found", result.data);
@@ -21,13 +43,22 @@ module.exports = {
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
-  getLeagueDetails: async (req, res) => {
+  getCompetitionSeasons: async (req, res) => {
     try {
-      const { leagueId } = req.params;
-      const result = await leaguesModel.getLeagueDetails(leagueId);
+      const { competitionId } = req.params;
+      const checkCompetition = await competitionsModel.getCountCompetition(
+        competitionId
+      );
 
+      if (checkCompetition.count < 1) {
+        return wrapper.response(res, 404, "Not Found", []);
+      }
+
+      const result = await competitionsModel.getCompetitionSeasons(
+        competitionId
+      );
       if (result.data.length < 1) {
-        return wrapper.response(res, 404, "Not Found", result.data);
+        return wrapper.response(res, 404, "Not Found", []);
       }
 
       return wrapper.response(
@@ -37,19 +68,18 @@ module.exports = {
         result.data
       );
     } catch (err) {
+      console.log(err);
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
-  getLeagueSeasons: async (req, res) => {
+  getUniqueCompetition: async (req, res) => {
     try {
-      const { leagueId, seasonId } = req.params;
-      const checkLeague = await leaguesModel.getLeagueCount(leagueId);
+      const { uniqueCompetitionId } = req.params;
 
-      if (checkLeague.count < 1) {
-        return wrapper.response(res, 404, "Not Found", []);
-      }
+      const result = await competitionsModel.getUniqueCompetition(
+        uniqueCompetitionId
+      );
 
-      const result = await leaguesModel.getLeagueSeasons(leagueId);
       if (result.data.length < 1) {
         return wrapper.response(res, 404, "Not Found", []);
       }
@@ -61,20 +91,15 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      return response.wrapper(res, 500, "Internal Server Error", null);
+      console.log(err);
+      return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
-  getLeagueSelectedSeason: async (req, res) => {
+  getSeasonMatches: async (req, res) => {
     try {
-      const { leagueId, seasonId } = req.params;
-
-      const checkLeague = await leaguesModel.getLeagueCount(leagueId);
-      if (checkLeague.count < 1) {
-        return wrapper.response(res, 404, "Not Found", []);
-      }
-
-      const result = await leaguesModel.getLeagueSelectedSeason(
-        leagueId,
+      const { competitionId, seasonId } = req.params;
+      const result = await competitionsModel.getSeasonMatches(
+        competitionId,
         seasonId
       );
       if (result.data.length < 1) {
@@ -88,24 +113,7 @@ module.exports = {
         result.data
       );
     } catch (err) {
-      return response.wrapper(res, 500, "Internal Server Error", null);
-    }
-  },
-  getSeasonMatches: async (req, res) => {
-    try {
-      const { leagueId, seasonId } = req.params;
-      const result = await leaguesModel.getSeasonMatches(leagueId, seasonId);
-      if (result.data.length < 1) {
-        return wrapper.response(res, 404, "Not Found", []);
-      }
-
-      return wrapper.response(
-        res,
-        result.status,
-        result.statusText,
-        result.data
-      );
-    } catch (err) {
+      console.log(err);
       return wrapper.response(res, 500, "Internal Server Error", null);
     }
   },
@@ -115,7 +123,7 @@ module.exports = {
       const supabaseClient = getSupabaseClient(userToken);
 
       const { name, country } = req.body;
-      const result = await leaguesModel.createNewLeague(
+      const result = await competitionsModel.createNewLeague(
         supabaseClient,
         name,
         country
