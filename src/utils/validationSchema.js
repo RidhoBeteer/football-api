@@ -1,11 +1,11 @@
 const Joi = require("joi");
 
 module.exports = {
-  leagueIdSchema: Joi.object({
-    leagueId: Joi.number().integer().positive().required(),
+  competitionIdSchema: Joi.object({
+    competitionId: Joi.number().integer().positive().required(),
   }),
   seasonDetailSchema: Joi.object({
-    leagueId: Joi.number().integer().positive().required(),
+    competitionId: Joi.number().integer().positive().required(),
     seasonId: Joi.number().integer().positive().required(),
   }),
   matchIdSchema: Joi.object({
@@ -15,7 +15,7 @@ module.exports = {
     email: Joi.string().email().required(),
     password: Joi.string().min(3).max(12).required(),
   }),
-  leagueTableSchema: Joi.object({
+  competitionTableSchema: Joi.object({
     name: Joi.string()
       .trim()
       .regex(/^[a-zA-Z0-9]+$/)
@@ -24,5 +24,8 @@ module.exports = {
       .trim()
       .regex(/^[A-Za-z]+$/)
       .required(),
+  }),
+  uniqueCompetitionSchema: Joi.object({
+    uniqueCompetitionId: Joi.number().integer().positive().required(),
   }),
 };
