@@ -18,12 +18,12 @@ const handleResult = (result, resolve, reject) => {
 };
 
 module.exports = {
-  getLeagueCount: (leagueId) =>
+  getCountCompetition: (competitionId) =>
     new Promise((resolve, reject) => {
       supabase
-        .from("leagues")
+        .from("competitions")
         .select("*", { count: "exact", head: true })
-        .eq("id", leagueId)
+        .eq("id", competitionId)
         .then((result) => {
           if (!result.error) {
             resolve(result);
@@ -31,37 +31,11 @@ module.exports = {
           reject(result);
         });
     }),
-  getAllLeagues: () =>
-    new Promise((resolve, reject) => {
-      supabase
-        .from("leagues")
-        .select("*")
-        .then((result) => {
-          if (!result.error) {
-            resolve(result);
-          }
-          reject(result);
-        });
-    }),
-  getLeagueDetails: (leagueId) =>
-    new Promise((resolve, reject) => {
-      supabase
-        .from("leagues")
-        .select("*")
-        .eq("id", leagueId)
-        .then((result) => {
-          if (!result.error) {
-            resolve(result);
-          }
-          reject(result);
-        });
-    }),
-  getLeagueSeasons: (leagueId) =>
+  getAllCompetitions: () =>
     new Promise((resolve, reject) => {
       supabase
         .from("competitions")
         .select("*")
-        .eq("league_id", leagueId)
         .then((result) => {
           if (!result.error) {
             resolve(result);
@@ -69,13 +43,12 @@ module.exports = {
           reject(result);
         });
     }),
-  getLeagueSelectedSeason: (leagueId, seasonId) =>
+  getCompetitionDetails: (competitionId) =>
     new Promise((resolve, reject) => {
       supabase
         .from("competitions")
         .select("*")
-        .eq("league_id", leagueId)
-        .eq("season_id", seasonId)
+        .eq("id", competitionId)
         .then((result) => {
           if (!result.error) {
             resolve(result);
@@ -83,22 +56,46 @@ module.exports = {
           reject(result);
         });
     }),
-  getSeasonMatches: (leagueId, seasonId) =>
+  getCompetitionSeasons: (competitionId) =>
+    new Promise((resolve, reject) => {
+      supabase
+        .from("unique_competitions")
+        .select("*")
+        .eq("competition_id", competitionId)
+        .then((result) => {
+          if (!result.error) {
+            resolve(result);
+          }
+          reject(result);
+        });
+    }),
+  getUniqueCompetition: (uniqueCompetitionId) =>
+    new Promise((resolve, reject) => {
+      supabase
+        .from("unique_competitions")
+        .select("*")
+        .eq("id", uniqueCompetitionId)
+        .then((result) => {
+          if (!result.error) {
+            resolve(result);
+          }
+          reject(result);
+        });
+    }),
+  getSeasonMatches: (competitionId, seasonId) =>
     new Promise((resolve, reject) => {
       supabase
         .from("matches")
         .select(
           `
-            match_id:id, match_datetime, status, attendance, home_formation, away_formation, home_score, away_score,
+            match_id:id, match_datetime, status, home_score, away_score,
             home_team:teams!matches_home_team_id_fkey(id, name, country:country_assoc),
             away_team:teams!matches_away_team_id_fkey(id, name, country:country_assoc),
-            competition:competitions!matches_competition_id_fkey(id, name),
-            referee:referees!inner(id, name, nationality),
-            venue:venues!inner(id, name, city, country, capacity)
+            unique_competition:unique_competitions!matches_unique_competition_id_fkey(id, name)
           `
         )
-        .eq("competitions.league_id", leagueId)
-        .eq("competitions.season_id", seasonId)
+        .eq("unique_competitions.competition_id", competitionId)
+        .eq("unique_competitions.season_id", seasonId)
         .then((result) => {
           if (!result.error) {
             resolve(result);
@@ -109,7 +106,7 @@ module.exports = {
   createNewLeague: (supabaseClient, name, country) =>
     new Promise((resolve, reject) => {
       supabaseClient
-        .from("leagues")
+        .from("competitions")
         .insert({ name, country })
         .select()
         .then((result) => {
